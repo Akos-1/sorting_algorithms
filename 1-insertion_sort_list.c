@@ -8,7 +8,7 @@
  */
 void insertion_sort_list(listint_t **list)
 {
-	listint_t *current, *insertion_point;
+	listint_t *current, *insertion_point, *tmp_prev;
 
 	if (list == NULL || *list == NULL || (*list)->next == NULL)
 		return;
@@ -21,19 +21,23 @@ void insertion_sort_list(listint_t **list)
 
 		while (insertion_point != NULL && insertion_point->n > current->n)
 		{
-			if (insertion_point->prev != NULL)
-				insertion_point->prev->next = current;
+			tmp_prev = insertion_point->prev;
+			insertion_point->prev = current;
+			current->next = insertion_point;
+			current->prev = tmp_prev;
+
+			if (tmp_prev != NULL)
+				tmp_prev->next = current;
 			else
 				*list = current;
+
+			insertion_point->next = current->next;
 			if (current->next != NULL)
 				current->next->prev = insertion_point;
 
-			insertion_point->next = current->next;
-			current->prev = insertion_point->prev;
-			current->next = insertion_point;
-			insertion_point->prev = current;
-			insertion_point = current->prev;
+			insertion_point = tmp_prev;
 		}
+
 		current = current->next;
 	}
 }
